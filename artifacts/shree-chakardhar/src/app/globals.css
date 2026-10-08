@@ -1,0 +1,201 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-manrope), sans-serif;
+  --font-display: var(--font-outfit), sans-serif;
+  --color-ink: #0c1016;
+  --color-ink-soft: #171d27;
+  --color-ivory: #f4f1eb;
+  --color-paper: #fbf9f6;
+  --color-gold: #b8924a;
+  --color-gold-soft: #d7c39a;
+  --color-copper: #c4622d;
+  --color-copper-deep: #9d4c22;
+  --color-stone: #6f6a62;
+  --color-line: rgba(12, 16, 22, 0.12);
+}
+
+:root {
+  --font-manrope: "Manrope";
+  --font-outfit: "Outfit";
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--color-ivory);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: #c4622d;
+  color: white;
+}
+
+:focus-visible {
+  outline: 2px solid #b8924a;
+  outline-offset: 3px;
+}
+
+img {
+  max-width: 100%;
+}
+
+.display {
+  font-family: var(--font-display);
+  font-weight: 500;
+  letter-spacing: -0.045em;
+  line-height: 0.92;
+}
+
+.eyebrow {
+  font-size: 0.72rem;
+  font-weight: 650;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.nav-link {
+  position: relative;
+  color: inherit;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  height: 1px;
+  width: 100%;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-link:hover::after,
+.nav-link[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 48px;
+  padding: 0 1.25rem;
+  font-size: 0.78rem;
+  font-weight: 650;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), background 0.35s ease, color 0.35s ease, border-color 0.35s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn-copper {
+  background: var(--color-copper);
+  color: white;
+}
+
+.btn-copper:hover {
+  background: var(--color-copper-deep);
+}
+
+.btn-ink {
+  background: var(--color-ink);
+  color: var(--color-ivory);
+}
+
+.btn-ghost {
+  border: 1px solid rgba(244, 241, 235, 0.4);
+  color: var(--color-ivory);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  border-color: var(--color-gold-soft);
+  color: white;
+}
+
+.btn-line {
+  border: 1px solid rgba(12, 16, 22, 0.2);
+  color: var(--color-ink);
+  background: transparent;
+}
+
+.btn-line:hover {
+  border-color: var(--color-ink);
+}
+
+.field {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  border-bottom: 1px solid rgba(12, 16, 22, 0.2);
+  padding: 0.7rem 0;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  color: var(--color-ink);
+  border-radius: 0;
+}
+
+.field:focus {
+  outline: none;
+  border-bottom-color: var(--color-copper);
+}
+
+.field option {
+  color: #0c1016;
+}
+
+.stage-floor {
+  background:
+    radial-gradient(ellipse at center, rgba(196, 98, 45, 0.28), transparent 58%),
+    radial-gradient(ellipse at 50% 80%, rgba(184, 146, 74, 0.18), transparent 45%),
+    linear-gradient(#121820, #0c1016 70%);
+}
+
+.road-swoosh {
+  background:
+    radial-gradient(120% 80% at 100% 100%, rgba(196, 98, 45, 0.55), transparent 46%),
+    radial-gradient(80% 60% at 78% 88%, rgba(120, 116, 110, 0.45), transparent 42%),
+    linear-gradient(180deg, rgba(12, 16, 22, 0) 0%, #0c1016 100%);
+}
+
+@keyframes drift {
+  0% { transform: scale(1.08) translate3d(0, 0, 0); }
+  100% { transform: scale(1.14) translate3d(-1.5%, -1%, 0); }
+}
+
+.kenburns {
+  animation: drift 18s ease-in-out alternate infinite;
+}
+
+@keyframes shine {
+  0% { transform: translateX(-130%) skewX(-18deg); }
+  45%, 100% { transform: translateX(230%) skewX(-18deg); }
+}
+
+.shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 244, 220, 0.18), transparent);
+  width: 35%;
+  animation: shine 7s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .kenburns, .shine::after { animation: none; }
+  .btn:hover { transform: none; }
+}

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Shree Chakardhar Enterprises"
+description = "A car rental website for customers in Gurugram to explore the vehicle fleet, compare cars, and book self-drive rentals with clear daily rates."
+version = "1.0.0"
+id = "artifacts/shree-chakardhar"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 22957
+
+[services.development]
+run = "pnpm --filter @workspace/shree-chakardhar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/shree-chakardhar", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/shree-chakardhar/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22957"
+BASE_PATH = "/"
