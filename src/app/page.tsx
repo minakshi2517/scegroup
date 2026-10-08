@@ -1,3 +1,4 @@
+"use client";
 import { AboutContact } from "@/components/sections/AboutContact";
 import { Benefits } from "@/components/sections/Benefits";
 import { CTA } from "@/components/sections/CTA";

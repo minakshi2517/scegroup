@@ -4,11 +4,11 @@ import { Reveal } from "@/components/Reveal";
 import { getVehicle, showcaseSlugs } from "@/data/vehicles";
 import { bookHref, formatINR } from "@/lib/booking";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { ThreeCarousel } from "@/components/ThreeCarousel";
 
-const labels = ["Luxury SUV", "Premium SUV", "Sports Car"] as const;
+const labels = ["Compact SUV", "Premium SUV", "Off-road"] as const;
 
 export function Showcase() {
   const cars = showcaseSlugs.map((slug) => getVehicle(slug)!).filter(Boolean);
@@ -20,35 +20,17 @@ export function Showcase() {
   return (
     <section className="bg-ink text-ivory">
       <div className="mx-auto grid max-w-7xl lg:grid-cols-12">
+        {/* 3D carousel stage */}
         <div className="stage-floor relative min-h-[420px] overflow-hidden lg:col-span-7 lg:min-h-[720px]">
-          <div
-            className="absolute left-1/2 top-[46%] h-[46%] w-[78%] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-80 blur-2xl"
-            style={{ background: "radial-gradient(circle, rgba(196,98,45,0.45), transparent 68%)" }}
-          />
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={car.slug}
-              className="absolute inset-0"
-              initial={reduce ? false : { opacity: 0, scale: 1.04, rotateY: -8 }}
-              animate={{ opacity: 1, scale: 1, rotateY: 0 }}
-              exit={reduce ? undefined : { opacity: 0, scale: 0.98 }}
-              transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
-              style={{ perspective: 1200 }}
-            >
-              <Image src={car.image} alt={car.name} fill className="object-cover object-center" sizes="(min-width: 1024px) 58vw, 100vw" />
-              <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-ink/20" />
-            </motion.div>
-          </AnimatePresence>
-          <div className="absolute bottom-6 left-6 right-6 flex gap-2">
-            {cars.map((item, i) => (
-              <button
-                key={item.slug}
-                type="button"
-                onClick={() => setIndex(i)}
-                className={`h-1 flex-1 ${i === index ? "bg-copper" : "bg-white/25"}`}
-                aria-label={labels[i]}
-              />
-            ))}
+          <ThreeCarousel autoRotate autoPlay />
+          {/* Car badge overlay */}
+          <div className="absolute left-4 top-6 z-20 flex items-center gap-3">
+            <span className="bg-ink/70 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ivory backdrop-blur-sm">
+              Spotlight
+            </span>
+            <span className="bg-ink/50 px-3 py-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.14em] text-ivory backdrop-blur-sm">
+              {labels[index]}
+            </span>
           </div>
         </div>
 
