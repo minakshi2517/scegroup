@@ -3,7 +3,6 @@ import { Reveal } from '@/components/Reveal';
 import { carsIn, categories, type Category } from '@/data/vehicles';
 import type { SearchQuery } from '@/lib/booking';
 import { useEffect, useMemo, useState } from 'react';
-import { Fleet3D } from '@/components/sections/Fleet3D';
 import { formatINR } from '@/lib/booking';
 
 export function Fleet({
@@ -29,6 +28,13 @@ export function Fleet({
     list[0]?.slug ?? ''
   );
   const activeCar = list.find((car) => car.slug === activeSlug) ?? list[0];
+  const activeIndex = Math.max(0, list.findIndex((car) => car.slug === activeCar?.slug));
+
+  const moveCarousel = (direction: -1 | 1) => {
+    if (!list.length) return;
+    const nextIndex = (activeIndex + direction + list.length) % list.length;
+    setActiveSlug(list[nextIndex].slug);
+  };
 
   useEffect(() => {
     if (!list.some((car) => car.slug === activeSlug)) {
@@ -116,52 +122,78 @@ export function Fleet({
           </div>
         ) : (
           <>
-            {/* 3D carousel stage */}
-            <div className="relative mt-8 h-[520px] min-h-[420px] overflow-hidden">
-              <Fleet3D
-                cars={list}
-                activeSlug={activeSlug}
-              />
+            {/* Featured car photo carousel */}
+            <div className="relative mt-8 h-[520px] min-h-[420px] overflow-hidden bg-ink">
+              {activeCar && (
+                <img
+                  key={activeCar.slug}
+                  src={activeCar.image}
+                  alt={`${activeCar.name} ${activeCar.year}`}
+                  className="absolute inset-0 h-full w-full object-cover object-center"
+                />
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/15 to-ink/20" />
+              <div className="absolute inset-0 bg-gradient-to-r from-ink/35 via-transparent to-ink/20" />
 
               {activeCar && (
-                <div className="absolute left-4 top-4 z-10 flex max-w-[calc(100%-2rem)] items-start justify-between gap-4 sm:left-6 sm:top-6">
-                  <div className="border border-white/15 bg-ink/80 px-4 py-3 text-ivory shadow-xl backdrop-blur-md sm:px-5 sm:py-4">
-                    <p className="eyebrow text-gold-soft">Selected vehicle</p>
-                    <p className="mt-2 font-display text-xl sm:text-2xl">{activeCar.name}</p>
-                    <p className="mt-1 text-sm text-ivory/70">
-                      {formatINR(activeCar.pricePerDay)} / day
-                    </p>
+                <>
+                  <div className="absolute left-4 top-4 z-10 sm:left-6 sm:top-6">
+                    <span className="border border-white/20 bg-ink/55 px-3 py-2 text-[0.65rem] font-semibold uppercase tracking-[0.16em] text-ivory backdrop-blur-md">
+                      {activeCar.category} · {activeCar.year}
+                    </span>
                   </div>
-                </div>
-              )}
 
-              {/* Car selector */}
-              <div
-                className="absolute bottom-4 left-4 right-4 z-10 flex gap-2 overflow-x-auto border border-white/10 bg-ink/85 p-2 shadow-xl backdrop-blur-md sm:bottom-6 sm:left-6 sm:right-6"
-                role="tablist"
-                aria-label="Choose a vehicle to preview"
-              >
-                {list.map((car) => {
-                  const active = car.slug === activeSlug;
-
-                  return (
+                  <div className="absolute right-4 top-4 z-10 flex gap-2 sm:right-6 sm:top-6">
                     <button
-                      key={car.slug}
                       type="button"
-                      role="tab"
-                      aria-selected={active}
-                      onClick={() => setActiveSlug(car.slug)}
-                      className={`shrink-0 px-3 py-2 text-left text-xs font-semibold uppercase tracking-[0.1em] transition-colors sm:px-4 ${
-                        active
-                          ? 'bg-copper text-white'
-                          : 'text-ivory/70 hover:bg-white/10 hover:text-white'
-                      }`}
+                      aria-label="Previous car"
+                      onClick={() => moveCarousel(-1)}
+                      className="grid h-11 w-11 place-items-center border border-white/30 bg-ink/55 text-white backdrop-blur-md transition hover:bg-copper"
                     >
-                      {car.name} - {formatINR(car.pricePerDay)}/day
+                      <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+                        <path d="M15 18 9 12l6-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </button>
-                  );
-                })}
-              </div>
+                    <button
+                      type="button"
+                      aria-label="Next car"
+                      onClick={() => moveCarousel(1)}
+                      className="grid h-11 w-11 place-items-center border border-white/30 bg-ink/55 text-white backdrop-blur-md transition hover:bg-copper"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" className="h-5 w-5" aria-hidden="true">
+                        <path d="m9 18 6-6-6-6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+
+                  <div className="absolute bottom-0 left-0 right-0 z-10 flex flex-col gap-5 p-5 text-ivory sm:flex-row sm:items-end sm:justify-between sm:p-8">
+                    <div aria-live="polite">
+                      <p className="eyebrow text-gold-soft">Featured in the fleet</p>
+                      <h3 className="mt-2 font-display text-3xl sm:text-4xl">{activeCar.name}</h3>
+                      <p className="mt-2 text-sm text-ivory/75">
+                        {activeCar.seats} seats · {activeCar.fuel} · {activeCar.transmission}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-5 sm:min-w-56 sm:flex-col sm:items-end sm:gap-2">
+                      <p className="font-display text-2xl">
+                        {formatINR(activeCar.pricePerDay)}
+                        <span className="ml-1 font-sans text-sm text-ivory/70">/ day</span>
+                      </p>
+                      <div className="flex items-center gap-3" aria-label={`Car ${activeIndex + 1} of ${list.length}`}>
+                        <span className="text-xs tabular-nums text-ivory/70">
+                          {String(activeIndex + 1).padStart(2, '0')} / {String(list.length).padStart(2, '0')}
+                        </span>
+                        <span className="h-1 w-20 overflow-hidden bg-white/25">
+                          <span
+                            className="block h-full bg-copper transition-[width] duration-300"
+                            style={{ width: `${((activeIndex + 1) / list.length) * 100}%` }}
+                          />
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
 
             {/* Car cards */}

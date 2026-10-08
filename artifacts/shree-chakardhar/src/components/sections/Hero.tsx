@@ -7,7 +7,6 @@ import { motion, useReducedMotion } from "framer-motion";
 import { Link } from "wouter";
 import { useRef } from "react";
 import type { MouseEvent } from "react";
-import { Car3D } from "@/components/Car3D";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
@@ -26,40 +25,29 @@ function handleHeroMouseMove(
 export function Hero() {
   const reduce = useReducedMotion() ?? false;
   const visual = useRef<HTMLDivElement>(null);
-  const car = getVehicle("thar-3-door") ?? getVehicle("venue-2026") ?? getVehicle("punch-2026") ?? getVehicle("swift");
+  const car = getVehicle("xuv700") ?? getVehicle("thar-3-door") ?? getVehicle("swift");
  
 
   if (!car) return null;
 
   return (
     <section className="relative min-h-[100svh] overflow-hidden bg-ink text-ivory" onMouseMove={(e) => handleHeroMouseMove(e, reduce, visual.current)}>
-      {/* 3D car stage with gradient background */}
+      {/* Full-bleed fleet photo keeps the hero clear even when WebGL is unavailable. */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-gradient-to-b from-ink/60 via-ink/20 to-ink/5" />
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[80%] w-[90%] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(244,241,235,0.12), transparent 70%)" }} />
+        <div
+          ref={visual}
+          className="absolute inset-[-3%] transition-transform duration-500 ease-out"
+        >
+          <img
+            src={car.image}
+            alt=""
+            fetchPriority="high"
+            className="h-full w-full object-cover object-[66%_center]"
+          />
         </div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[60%] w-[90%] rounded-full blur-3xl" style={{ background: "radial-gradient(circle, rgba(184,146,74,0.18), transparent 70%)" }} />
-        {/* Animated road lines */}
-        <div className="absolute bottom-0 left-0 right-0 h-32">
-          <div className="absolute bottom-0 left-0 right-0 h-full" style={{
-            background: `linear-gradient(90deg, transparent 0%, transparent 45%, rgba(184,146,74,0.35) 45%, rgba(184,146,74,0.35) 55%, transparent 55%, transparent 100%)`,
-          }}>
-            <div className="absolute inset-y-0 left-[22%] w-px bg-white/10" style={{ animation: "shineLine 3s ease-in-out infinite alternate" }} />
-            <div className="absolute inset-y-0 left-[63%] w-px bg-white/10" style={{ animation: "shineLine 3.6s ease-in-out infinite alternate-reverse" }} />
-          </div>
-          <style>{`
-            @keyframes shineLine {
-              0% { transform: translateX(-20%); opacity: 0.3; }
-              100% { transform: translateX(120%); opacity: 1; }
-            }
-          `}</style>
-        </div>
-        {/* 3D car */}
-        <div className="absolute inset-0 flex items-center justify-center p-8">
-          <Car3D car={car} />
-        </div>
-        <div className="shine absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/55 to-ink/10" />
+        <div className="absolute inset-0 bg-gradient-to-t from-ink/85 via-transparent to-ink/15" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_45%,transparent_5%,rgba(12,16,22,0.14)_78%)]" />
       </div>
 
       <div className="relative mx-auto flex min-h-[100svh] max-w-7xl flex-col justify-end px-4 pb-8 pt-28 sm:px-6 lg:pb-10">
